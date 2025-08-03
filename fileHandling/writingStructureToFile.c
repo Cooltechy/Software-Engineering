@@ -3,6 +3,8 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include "fileUtils.h"
+
 
 typedef struct student
 {
@@ -41,31 +43,6 @@ STUDENT creatingNewStudentDetails(){
     return st;
 }
 
-bool isFileExists(const char* fileName) {
-    FILE *fptr = fopen(fileName, "rb");
-    if (fptr) {
-        fclose(fptr);
-        return true;
-    }
-
-    return false;
-}   
-
-FILE* createFile(const char* fileName) {
-    FILE *fptr = fopen(fileName, "w+b");
-    if (fptr) {
-        return fptr;
-    }
-    return NULL;
-}
-
-FILE* openFile(const char* fileName, const char* mode) {
-    FILE *fptr = fopen(fileName, mode);
-    if (fptr) {
-        return fptr;
-    }
-    return NULL;
-}
 
 int AddingDetails(const char* fileName){
 
