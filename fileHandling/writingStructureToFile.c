@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
 typedef struct student
 {
@@ -21,8 +23,17 @@ STUDENT creatingNewStudentDetails(){
     fgets(st.name, sizeof(st.name), stdin);
     printf("Enter marks of subject 1: ");
     scanf("%f", &st.subject1);
+    while (st.subject1 < 0 || st.subject1 > 100) {
+        printf("Invalid marks for subject 1. Please enter again (0-100): ");
+        scanf("%f", &st.subject1);
+    }
+    
     printf("Enter marks of subject 2: ");
     scanf("%f", &st.subject2);
+    while (st.subject2 < 0 || st.subject2 > 100) {
+        printf("Invalid marks for subject 2. Please enter again (0-100): ");
+        scanf("%f", &st.subject2);
+    }
 
     st.total = st.subject1 + st.subject2;
     st.avg = st.total / 2.0;
@@ -30,28 +41,46 @@ STUDENT creatingNewStudentDetails(){
     return st;
 }
 
+bool isFileExists(const char* fileName) {
+    FILE *fptr = fopen(fileName, "rb");
+    if (fptr) {
+        fclose(fptr);
+        return true;
+    }
+
+    return false;
+}   
+
+FILE* createFile(const char* fileName) {
+    FILE *fptr = fopen(fileName, "w+b");
+    if (fptr) {
+        return fptr;
+    }
+    return NULL;
+}
+
+FILE* openFile(const char* fileName, const char* mode) {
+    FILE *fptr = fopen(fileName, mode);
+    if (fptr) {
+        return fptr;
+    }
+    return NULL;
+}
+
 int AddingDetails(const char* fileName){
+
+    system("clear");
+
     FILE *fptr;
 
     // Try to open for reading to check existence
-    printf("Checking if file exists...\n");
-    fptr = fopen(fileName, "rb");
-    if (fptr) {
-        fclose(fptr);
-        // File exists, open for appending
-        fptr = fopen(fileName, "ab");
-        printf("File exists.\nAdding new details.\n");
-    } 
-    else {
-        // File does not exist, create new
-        fptr = fopen(fileName, "wb");
-        printf("File does not exist.\nCreating new file.\n");
-    }
-
+    printf("Opening file %s for adding details...\n", fileName);
+    fptr = openFile(fileName, "ab");
     if (!fptr) {
-        printf("Error in opening/creating file\n");
+        printf("Error in opening %s for writing.\n", fileName);
         return 1;
     }
+    printf("%s opened successfully \nAdding details...\n", fileName);
 
     char ch ;
     do {
@@ -66,14 +95,20 @@ int AddingDetails(const char* fileName){
 }
 
 int DisplayDetails(const char* fileName){
-    FILE *fptr = fopen(fileName, "rb");
+    
+    system("clear");
+
+    printf("Opening %s for displaying details...\n", fileName);
+    FILE *fptr = openFile(fileName, "rb");
     if (!fptr) {
-        printf("Error in opening file or file doesn't exist\n");
-        return 1;
+        printf("Error in opening %s for reading.\n", fileName);
+        return -1;
     }
+    printf("%s opened successfully for displaying details.\n\n", fileName);
 
     STUDENT st;
-    printf("Displaying student details:\n");
+    int count = 0;
+    printf("Displaying student details:\n\n");
     while (fread(&st, sizeof(STUDENT), 1, fptr)) {
         printf("Roll No: %d\n", st.RollNo);
         printf("Name: %s\n", st.name);
@@ -82,10 +117,18 @@ int DisplayDetails(const char* fileName){
         printf("Total Marks: %.2f\n", st.total);
         printf("Average Marks: %.2f\n", st.avg);
         printf("-----------------------------\n");
+        count++;
     }
 
     fclose(fptr);
-    return 0;
+
+    // if (count == 0) 
+    //     printf("No student details found in %s.\n", fileName);
+    // else 
+    //     printf("Total %d student(s) displayed.\n", count);
+    
+
+    return count;
 }
 
 int main(){
@@ -99,6 +142,32 @@ int main(){
     scanf("%255s", fileName);
     // Append .dat extension
     strcat(fileName, ".dat");
+
+    FILE *fptr;
+    printf("Checking for existance of file: %s\n", fileName);
+    if(!isFileExists(fileName)) {
+        printf("File %s doesn't exists.\n", fileName);
+        printf("Want to create a new file? (y/n): ");
+        char choice;
+        scanf(" %c", &choice);
+
+        if (tolower(choice) == 'y') {
+            fptr = createFile(fileName);
+            if (fptr) {
+                printf("File %s created successfully.\n", fileName);
+                fclose(fptr);
+            } else {
+                printf("Error creating file %s.\n", fileName);
+                return 1;
+            }
+        } 
+        else {
+            printf("Exiting program.\n");
+            return 0;
+        }
+    }
+
+
     
 
     int choice;
@@ -112,8 +181,10 @@ int main(){
                 printf("Details added successfully.\n");
                 break;
             case 2:
-                if(DisplayDetails(fileName)) return 1;
-                printf("Details displayed successfully.\n");
+                int disp = DisplayDetails(fileName);    
+                if(disp == -1) return 1;
+                else if(disp > 0) printf("Details displayed of %d student(s) successfully.\n", disp);
+                else printf("No record found.\n");
                 break;
             case 3:
                 printf("Exiting...\n");
