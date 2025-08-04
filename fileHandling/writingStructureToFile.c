@@ -88,7 +88,7 @@ int DisplayDetails(const char* fileName){
     printf("Displaying student details:\n\n");
     while (fread(&st, sizeof(STUDENT), 1, fptr)) {
         printf("Roll No: %d\n", st.RollNo);
-        printf("Name: %s\n", st.name);
+        printf("Name: %s", st.name);
         printf("Subject 1 Marks: %.2f\n", st.subject1);
         printf("Subject 2 Marks: %.2f\n", st.subject2);
         printf("Total Marks: %.2f\n", st.total);
@@ -106,6 +106,25 @@ int DisplayDetails(const char* fileName){
     
 
     return count;
+}
+
+STUDENT SearchStudent(const char* fileName, int rollNo) {
+    FILE *fptr = openFile(fileName, "rb");
+    if (!fptr) {
+        printf("Error in opening %s for searching.\n", fileName);
+        return (STUDENT){-1}; // Return an empty student structure
+    }
+
+    STUDENT st;
+    while (fread(&st, sizeof(STUDENT), 1, fptr)) {
+        if (st.RollNo == rollNo) {
+            return st; // Student found
+        }
+    }
+
+    fclose(fptr);
+    printf("Student with Roll No %d not found.\n", rollNo);
+    return (STUDENT){0}; // Student not found
 }
 
 int main(){
@@ -149,13 +168,13 @@ int main(){
 
     int choice;
     do {
-        printf("\n1. Add Student Details\n2. Display Student Details\n3. Exit\nEnter your choice: ");
+        printf("\n1. Add Student Details\n2. Display Student Details\n3. Search Student Details\n4. Exit\nEnter your choice: ");
         scanf("%d", &choice);
 
         switch (choice) {
             case 1:
                 if(AddingDetails(fileName)) return 1;
-                printf("Details added successfully.\n");
+                printf("Details added successfully.\n\n");
                 break;
             case 2:
                 int disp = DisplayDetails(fileName);    
@@ -164,12 +183,30 @@ int main(){
                 else printf("No record found.\n");
                 break;
             case 3:
-                printf("Exiting...\n");
+                printf("Enter Roll No to search: ");
+                int rollNo;
+                scanf("%d", &rollNo);
+                STUDENT st = SearchStudent(fileName, rollNo);
+                if (st.RollNo == -1) return 1; // Error in opening file
+                if (st.RollNo == 0)  printf("No student found with Roll No %d.\n", rollNo);
+                else {
+                    printf("Student found:\n");
+                    printf("Roll No: %d\n", st.RollNo);
+                    printf("Name: %s", st.name);
+                    printf("Subject 1 Marks: %.2f\n", st.subject1);
+                    printf("Subject 2 Marks: %.2f\n", st.subject2);
+                    printf("Total Marks: %.2f\n", st.total);
+                    printf("Average Marks: %.2f\n", st.avg);
+                }
+                printf("Search completed.\n\n");
+                break;
+            case 4:
+                printf("Exiting...\n\n");
                 break;
             default:
                 printf("Invalid choice. Try again.\n");
         }
-    } while (choice != 3);
+    } while (choice != 4);
 
 
     return 0;
