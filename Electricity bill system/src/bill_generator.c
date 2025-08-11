@@ -1,15 +1,6 @@
 #include "bill_generator.h"
 #include "user_module.h"
 
-int findUserIndex(const char* serviceNumber) {
-    for (int i = 0; i < userCount; i++) {
-        if (strcmp(bills[i].serviceNumber, serviceNumber) == 0) {
-            return i;
-        }
-    }
-    return -1;
-}
-
 double calculateCurrentMonthUsage(const char* serviceNumber, double newReading) {
     int index = findUserIndex(serviceNumber);
     if (index == -1) return -1;

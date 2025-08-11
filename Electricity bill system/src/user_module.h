@@ -8,5 +8,6 @@ char* generateServiceNumber(void);
 bool registerUser(const char* name, const char* phone, const char* address, char* serviceNumber);
 void initialiseUserBill(const char* serviceNumber);
 bool isUserValid(const char* serviceNumber);
+int findUserIndex(const char* serviceNumber);
 
 #endif

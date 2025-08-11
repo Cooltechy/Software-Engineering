@@ -58,3 +58,12 @@ bool isUserValid(const char* serviceNumber) {
     }
     return false;
 }
+
+int findUserIndex(const char* serviceNumber) {
+    for (int i = 0; i < userCount; i++) {
+        if (strcmp(bills[i].serviceNumber, serviceNumber) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}

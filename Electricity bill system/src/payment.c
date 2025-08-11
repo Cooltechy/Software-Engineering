@@ -1,8 +1,6 @@
 #include "payment.h"
 #include "user_module.h"
 
-extern int findUserIndex(const char* serviceNumber);
-
 void updateBillStatus(const char* serviceNumber, double amount) {
     int index = findUserIndex(serviceNumber);
     if (index == -1) return;

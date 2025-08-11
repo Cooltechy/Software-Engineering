@@ -1,8 +1,6 @@
 #include "report.h"
 #include "user_module.h"
 
-extern int findUserIndex(const char* serviceNumber);
-
 void reportBillNotPaid(void) {
     printf("\n=== CUSTOMERS WITH UNPAID BILLS ===\n");
     printf("Criteria: Total Bill > 10000 OR Dues > 5000\n\n");
