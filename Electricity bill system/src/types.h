@@ -7,7 +7,7 @@
 #include <stdbool.h>
 
 #define MAX_NAME_LENGTH 100
-#define MAX_PHONE_LENGTH 15
+#define MAX_PHONE_LENGTH 10
 #define MAX_ADDRESS_LENGTH 200
 #define SERVICE_NUMBER_LENGTH 37
 #define MAX_USERS 1000
