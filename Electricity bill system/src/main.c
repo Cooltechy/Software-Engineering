@@ -20,6 +20,12 @@ int main(void) {
     char serviceNumber[SERVICE_NUMBER_LENGTH];
     double reading, amount;
     
+    // Load existing data from files
+    printf("Loading existing data...\n");
+    if (!loadDataFromFiles()) {
+        printf("Warning: Failed to load existing data. Starting fresh.\n");
+    }
+    
     while (1) {
         displayMenu();
         scanf("%d", &choice);
@@ -36,6 +42,7 @@ int main(void) {
                 if (registerUser(name, phone, address, serviceNumber)) {
                     printf("User registered successfully!\n");
                     printf("Your Service Number: %s\n", serviceNumber);
+                    saveDataToFiles(); // Auto-save after registration
                 } else {
                     printf("Registration failed! Maximum users reached.\n");
                 }
@@ -58,6 +65,7 @@ int main(void) {
                 if (generateBill(serviceNumber, reading)) {
                     printf("Bill generated successfully!\n");
                     reportByServiceNumber(serviceNumber);
+                    saveDataToFiles(); // Auto-save after bill generation
                 } else {
                     printf("Failed to generate bill! Error in calculation.\n");
                 }
@@ -80,6 +88,7 @@ int main(void) {
                 PaymentStatus status = processPayment(serviceNumber, amount);
                 if (status == PAYMENT_SUCCESS) {
                     printf("Payment processed successfully!\n");
+                    saveDataToFiles(); // Auto-save after payment
                 } else if (status == USER_NOT_FOUND) {
                     printf("Error: User not found!\n");
                 } else {
@@ -98,6 +107,12 @@ int main(void) {
                 break;
                 
             case 6:
+                printf("Saving data before exit...\n");
+                if (saveDataToFiles()) {
+                    printf("Data saved successfully.\n");
+                } else {
+                    printf("Warning: Failed to save data.\n");
+                }
                 printf("Thank you for using Electricity Bill Management System!\n");
                 exit(0);
                 

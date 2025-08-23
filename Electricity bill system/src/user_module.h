@@ -10,4 +10,8 @@ void initialiseUserBill(const char* serviceNumber);
 bool isUserValid(const char* serviceNumber);
 int findUserIndex(const char* serviceNumber);
 
+// File persistence functions
+bool saveDataToFiles(void);
+bool loadDataFromFiles(void);
+
 #endif

@@ -58,3 +58,7 @@ dkms.conf
 #files during file handling
 *.txt
 *.dat
+
+# Build directories
+*/bin/*
+*/obj/*
